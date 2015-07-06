@@ -45,13 +45,16 @@ def open_word_file(file_name, level):
 
     # from the word list select a random word to return
     our_word = random.choice(word_list)
-    #print(our_word)
 
     return our_word
 
 
 def put_letter_in_string(chosen_word, r_string, user_letter):
-
+    """
+        given the chosen word as built so far and the string to return - which may already
+        have some letters built into it and the current user letter - put this string in the
+        return string.
+    """
     # put our chosen word into a list
     word_list = r_string.split()
     index = 0
@@ -68,7 +71,13 @@ def put_letter_in_string(chosen_word, r_string, user_letter):
     return new_return_string
 
 
-def ask_user_for_letter(already_found):
+def ask_user_for_letter(already_found, already_guessed):
+    """
+        This method will take what was already found and what was already guessed and ask
+        the user to enter another letter.  Users cannot enter the same letter twice, and
+        they cannot enter double characters or numeric characters.  The method returns
+        the user letter.
+    """
     # Ask the user for a one letter guess
     user_letter = input('What is your one letter guess')
 
@@ -80,15 +89,23 @@ def ask_user_for_letter(already_found):
         num_flag = True
 
     if len(user_letter) > 1 or num_flag:
-        user_letter = ask_user_for_letter(already_found)
+        print('That\'s not a valid entry - please try again')
+        user_letter = ask_user_for_letter(already_found, already_guessed)
     elif user_letter in already_found:
-        print('Try another letter - you already found that one!'+'\n')
-        user_letter = ask_user_for_letter(already_found)
+        print('Try another letter - you already found that one!\n')
+        user_letter = ask_user_for_letter(already_found, already_guessed)
+    elif user_letter in already_guessed:
+        print('Try another letter - you already guessed that one!\n')
+        user_letter = ask_user_for_letter(already_found, already_guessed)
 
     return user_letter
 
 
 def enter_play_mode():
+    """
+        this method allows the user to enter the play mode for the game.  if they choose
+        anything other than e, n, h the request is repeated.  returns the play_mode
+    """
     # ask the user to enter their chosen play mode
     play_mode = input('Choose your level of difficulty (E)asy (N)ormal (H)ard.').lower()
 
@@ -99,11 +116,16 @@ def enter_play_mode():
 
 
 def play_game():
-
+    """
+        this method contains the logic to play the game calls helper functions to get user
+        input and keeps track of when the game is over - calls itself recursively if the player
+        wants to continue otherwise the game ends.  It does not return anything.
+    """
     # set variables for play
     number_of_tries = 8
     found_letter_string = ''
     play_again = ''
+    guessed_letters = ''
 
     # let the user select their play mode
     mode = enter_play_mode()
@@ -125,25 +147,29 @@ def play_game():
     while number_of_tries > 0 and '_' in found_letter_string:
 
         # ask the user for a letter and make sure its just a single letter
-        letter = ask_user_for_letter(found_letter_string)
+        letter = ask_user_for_letter(found_letter_string, guessed_letters)
+        guessed_letters += letter+' '
 
         if letter in chosen_word:
             # if the letter is in the chosen word put it in the string to print
             found_letter_string = put_letter_in_string(chosen_word, found_letter_string, letter)
-            print("YES {} was found".format(letter))
+            print("YES {} was found".format(letter.upper()))
         else:
             # if the letter is not found in the string decrease the number of tries left
             number_of_tries -= 1
-            print("SORRY {} was not found".format(letter))
+            print("SORRY {} was not found".format(letter.upper()))
 
         print(found_letter_string.upper())
-        print('\nyou have {} tries remaining.'.format(number_of_tries))
+        print('\nYou have {} tries remaining.'.format(number_of_tries))
+        guessed_letters = guessed_letters.replace(' ', '')
+        guessed_letters = ' '.join(sorted(guessed_letters))
+        print('Used letters: {}'.format(guessed_letters.upper()))
 
     if number_of_tries == 0 and '_' in found_letter_string:
-        play_again = input("sorry out of tries. The word was {}.\n Type (P) to play again.".format(chosen_word.upper())).lower()
+        play_again = input('You Lose! The word was {}.\n Type (P) to play again.'.format(chosen_word.upper())).lower()
 
     if '_' not in found_letter_string:
-        play_again = input("YOU DID IT!!!  Type (P) to play again.").lower()
+        play_again = input('YOU DID IT!!!  Type (P) to play again.').lower()
 
     if play_again == 'p':
         play_game()
