@@ -1,8 +1,5 @@
 from mystery_word import *
 
-word_list = ["bird", "calf", "river", "stream", "kneecap",  "cookbook",
-             "language", "sneaker", "algorithm", "integration", "brain"]
-
 
 def test_put_letter_in_string():
 
@@ -14,11 +11,11 @@ def test_put_letter_in_string():
     assert put_letter_in_string(chosen_word, r_string, user_letter).upper() == '_ I _ D'
 
 
-def test_ask_user_for_letter():
-    already_found = '_ _ _ _ E R'
-    already_guessed = 'E R T Z'
-
-    assert ask_user_for_letter(already_found, already_guessed) ==
+# def test_ask_user_for_letter():
+#     already_found = '_ _ _ _ E R'
+#     already_guessed = 'E R T Z'
+#
+#     assert ask_user_for_letter(already_found, already_guessed) ==
 
 # def test_easy_words():
 #     assert easy_words(word_list) == \
